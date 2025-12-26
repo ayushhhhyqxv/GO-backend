@@ -146,5 +146,20 @@ func main(){
 		return c.JSON(http.StatusOK,u)
 	})
 
+	e.DELETE("/users/:id",func (c echo.Context) error{
+		id,_:=strconv.Atoi(c.Param("id"))
+		result,err:=db.Exec("Delete from users where id=$1",id)
+		if err!=nil{
+			return c.JSON(http.StatusBadRequest,map[string]string{"Error" : "Invalid Delete Request !"})
+		}
+		rowsAffected,_:=result.RowsAffected()
+		if rowsAffected==0{
+			return c.JSON(http.StatusNotFound,map[string]string{"Error" : " User not found !"})
+		}
+
+		return c.JSON(http.StatusOK,map[string]string{"Success" : " User Deleted Successfully !"})
+
+	})
+
 	e.Logger.Fatal(e.Start(":8090"))
 }
