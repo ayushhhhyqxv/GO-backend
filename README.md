@@ -1,37 +1,72 @@
-
-A RESTful API built with the **GoLang**, the **Echo Web Framework**, and **PostgreSQL**. This demonstrates GET,POST,PUT,PATCH capabilities with proper HTTP status codes and SQL injection protection.
-
+**A collection of Go Snippets having various backend implementations using Echo and PostgreSQL**
 
 
-* **RESTful Routing**: Clean and organized endpoints using the Echo framework.
-* **Database Integration**: Persistent storage with PostgreSQL using the `pq` driver.
-* **Data Binding**: Automatic JSON-to-Struct mapping using `c.Bind`.
-* **Robust Error Handling**: Standardized HTTP status codes (200, 201, 400, 404, 500).
-* **Middleware**: Integrated request logging for debugging and performance monitoring.
+###  Rate Limiter
+Implements API rate limiting :
+- User signup with unique API key generation
+- Request rate limiting middleware (15 requests per 15 seconds)
+- Database-backed rate limit tracking
+- Retry-After header support
 
----
+**Endpoints:**
+- `POST /signup` - Create user and generate API key
+- `GET /data` - Protected endpoint with rate limiting
 
-## Requirements: 
+###  Pagination
+Product management API with advanced filtering and pagination:
+- Paginated product listing with configurable page size
+- Sorting by any field (ascending/descending)
+- Text-based filtering on product name and category
+- Sample data seeding
 
-* **Go**: 1.18 or higher.
-* **PostgreSQL**: Installed and running on `localhost:5432`.
-* **Postman**: Recommended for testing the API endpoints.
+**Endpoints:**
+- `POST /seed` - Populate database with sample products
+- `GET /products` - Fetch products with pagination, filtering, and sorting
 
----
+**Query Parameters:**
+- `page` - Page number (default: 1)
+- `limit` - Items per page (default: 5)
+- `sortField` - Field to sort by
+- `sortOrder` - Sort order (asc/desc)
+- `filter` - Search term for name and category
 
-## Setup
+###  Binary Upload
+File upload and retrieval system:
+- Store files as binary data in PostgreSQL
+- Download previously uploaded files
+- Support for any file type
 
-1. **Clone the repository** to your local machine.
-2. **Initialize the Go module**:
-   ```bash
-   go mod init restAPI
-   go get [github.com/labstack/echo/v4](https://github.com/labstack/echo/v4)
-   go get [github.com/lib/pq](https://github.com/lib/pq) ```
-3. **Set your own DSN**:
-    ```bash
-    dsn := "host=localhost port=5432 user=postgres password=YOUR_PW dbname=newdb sslmode=disable"
+**Endpoints:**
+- `POST /upload` - Upload file
+- `GET /file/:id` - Download file by ID
+
+###  Email Setup
+Email sending utility with attachment support using SMTP configuration from environment variables.
+
+## Stack
+- **Framework:** Echo (v4)
+- **Database:** PostgreSQL with GORM ORM
+- **Configuration:** .env file for environment variables
+- **Email:** gomail package for SMTP
+
+## Instructions
+
+1. Create `.env` file with required variables:
     ```
-4. **Run the Program**:
-    ```bash
+    DB_HOST=localhost
+    DB_USER=postgres
+    DB_PASSWORD=<your_password>
+    DB_NAME=<db_name>
+    DB_PORT=5432
+    SERVER_PORT=<any_port_which_isn't_busy>
+    ```
+
+2. Install dependencies:
+    ```
+    go mod download
+    ```
+
+3. Run project:
+    ```
     go run main.go
     ```
