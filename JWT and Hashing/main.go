@@ -25,7 +25,7 @@ type User struct {
 }
 
 func main(){
-	dsn:="host=localhost user=postgres password=test@123 dbname=testdb port=5432 sslmode=disable"
+	dsn:="host=localhost user=postgres password=test@123 dbname=testdb password=test@123 port=5432 sslmode=disable"
 
 	database,err:= gorm.Open(postgres.Open(dsn),&gorm.Config{}) // gorm config allows to customize gorm how it behaves ! 
 
@@ -53,6 +53,11 @@ func register(c echo.Context) error {
 	if err:= c.Bind(u);err!=nil{
 		return err
 	}
+
+	if len(u.Password)< 4 || len(u.Password)>=9 {
+		return c.JSON(http.StatusBadRequest,echo.Map{"Error":"Password length should be between 4-8 characters"})
+	}
+
 	hash,err:=bcrypt.GenerateFromPassword([]byte(u.Password),bcrypt.DefaultCost)
 	if err!=nil{
 		return c.JSON(http.StatusInternalServerError,echo.Map{"Error": "Failed to Hash Password "})
@@ -76,9 +81,13 @@ func login(c echo.Context) error {
 	if err:=db.Where("email=?",req.Email).First(&check).Error;err!=nil{
 		return c.JSON(http.StatusUnauthorized,echo.Map{"Error":"Invalid Email"})
 	}
-	// if check.Password != req.Password { 
-    // return c.JSON(http.StatusUnauthorized, echo.Map{"Error": "Invalid Password"})
-// }
+
+	if err:= bcrypt.CompareHashAndPassword([]byte(check.Password),[]byte(req.Password));err!=nil{
+		return c.JSON(http.StatusUnauthorized,echo.Map{"Error":"Invalid Password/Email"})
+	}
+		// if check.Password != req.Password { 
+		// return c.JSON(http.StatusUnauthorized, echo.Map{"Error": "Invalid Password"})
+	// }
 	token:= jwt.NewWithClaims(jwt.SigningMethodHS256,jwt.MapClaims{
 		"user_id":check.ID,
 		"email":check.Email,
