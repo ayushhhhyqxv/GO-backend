@@ -1,0 +1,72 @@
+Function : Type	Purpose
+
+websocket.Upgrader	Server‑side configuration for upgrading HTTP to WebSocket.
+
+upgrader.Upgrade()	Performs the upgrade, returns a *websocket.Conn.
+
+websocket.Dialer	Client‑side configuration for dialing a WebSocket server.
+
+conn.ReadMessage()	Reads a complete message (type + payload).
+
+conn.WriteMessage()	Writes a complete message.
+
+conn.NextReader() / NextWriter()	Stream large messages chunk‑by‑chunk.
+
+conn.ReadJSON() / WriteJSON()	Convenient JSON encoding/decoding.
+
+conn.Close()	Closes the connection (send close frame).
+
+conn.SetReadDeadline() / SetWriteDeadline()	Prevent indefinite blocking.
+
+conn.SetPingHandler() / SetPongHandler()	Custom handling of ping/pong messages.
+
+websocket.IsCloseError()	Check if error is a normal closure.
+
+websocket.IsUnexpectedCloseError()	Check if close was unexpected (e.g., network failure).
+
+Status Codes : 
+
+Standard Protocol Codes (1000 – 1015)
+
+* 1000 (Normal Closure)
+* The connection closed successfully after completing its purpose. [1] 
+* 1001 (Going Away)
+* The server is shutting down, or the client navigated away from the page. [1, 2] 
+* 1002 (Protocol Error)
+* The connection was terminated because one side broke a protocol rule. [1, 2] 
+* 1003 (Unsupported Data)
+* The endpoint received a data type it cannot accept.
+   * Example: Sent binary data to a text-only endpoint. [2, 3] 
+* 1004 (Reserved)
+* Read out of use. Do not use this code.
+* 1005 (No Status Rcvd)
+* Internal use only.
+   * Expect this when a connection closed without sending a close frame.
+* 1006 (Abnormal Closure)
+* Internal use only.
+   * Indicates the connection dropped abruptly without a clean closing handshake.
+   * Example: Computer lost Wi-Fi connection.
+* 1007 (Invalid Frame Payload Data)
+* Received data that wasn't consistent with the message type.
+   * Example: Malformed UTF-8 text.
+* 1008 (Policy Violation)
+* The message violated a generic security or business policy.
+   * Used when generic codes do not apply. [2] 
+* 1009 (Message Too Big)
+* A message was received that exceeded the server's or client's buffer capacity.
+* 1010 (Mandatory Extension)
+* The client closed the connection because the server failed to negotiate a required extension.
+* 1011 (Internal Error)
+* The server encountered an unexpected condition or runtime crash that prevented it from fulfilling the request.
+* 1012 (Service Restart)
+* The server is rebooting or updating.
+   * The client should try reconnecting in a few seconds.
+* 1013 (Try Again Later)
+* The server is temporarily overloaded.
+   * The client should back off and try again later.
+* 1014 (Bad Gateway)
+* The server, acting as a gateway or proxy, received an invalid response from the upstream server.
+* 1015 (TLS Handshake)
+* Internal use only.
+   * The connection failed because the TLS/SSL certificate handshake could not be completed.
+
